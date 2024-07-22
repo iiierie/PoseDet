@@ -5,3 +5,4 @@ matplotlib==3.9.1
 numpy==1.26.4
 streamlit==1.36.0
 pillow==10.2.0
+streamlit-webrtc
