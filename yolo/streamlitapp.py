@@ -102,7 +102,7 @@ class VideoProcessor(VideoProcessorBase):
 
 
 def main():
-    st.title("Detection and Segmentation App")
+    st.title("PoseDet")
     
     if 'output_video_path' not in st.session_state:
         st.session_state.output_video_path = None
