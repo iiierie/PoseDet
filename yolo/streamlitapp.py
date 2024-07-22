@@ -7,7 +7,8 @@ import tempfile
 import os
 import io
 import streamlit.components.v1 as components
-from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
+# from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
+from streamlit_webrtc import VideoProcessorBase, webrtc_streamer
 
 # Load YOLO models for different tasks
 pose_model = YOLO("yolov8n-pose.pt")
