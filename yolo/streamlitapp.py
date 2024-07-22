@@ -80,7 +80,7 @@ def process_video(video_bytes, task):
 
     return temp_output_file_path.name
 
-class VideoTransformer(VideoTransformerBase):
+class VideoProcessor(VideoProcessorBase):
     def __init__(self, task):
         self.task = task
 
@@ -95,11 +95,11 @@ class VideoTransformer(VideoTransformerBase):
         elif self.task == "Segmentation":
             results = seg_model(img_rgb)
         
-        # Convert plot to BGR before returning
         plot = results[0].plot()
         plot_bgr = cv2.cvtColor(np.array(plot), cv2.COLOR_RGB2BGR)
         
         return plot_bgr
+
 
 def main():
     st.title("Detection and Segmentation App")
