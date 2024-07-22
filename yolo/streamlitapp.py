@@ -1,161 +1,161 @@
-# import streamlit as st
-# import cv2
-# import numpy as np
-# from ultralytics import YOLO
-# from PIL import Image
-# import tempfile
-# import os
-# import io
+# # import streamlit as st
+# # import cv2
+# # import numpy as np
+# # from ultralytics import YOLO
+# # from PIL import Image
+# # import tempfile
+# # import os
+# # import io
 
-# # Load the YOLOv8 pose model
-# model = YOLO("yolov8n-pose.pt")
+# # # Load the YOLOv8 pose model
+# # model = YOLO("yolov8n-pose.pt")
 
-# def detect_pose(image):
-#     # Convert image to OpenCV format
-#     image = np.array(image)
+# # def detect_pose(image):
+# #     # Convert image to OpenCV format
+# #     image = np.array(image)
     
-#     # Run pose estimation
-#     results = model(image)
+# #     # Run pose estimation
+# #     results = model(image)
     
-#     # Get the plot image with poses drawn on it
-#     plot = results[0].plot()
+# #     # Get the plot image with poses drawn on it
+# #     plot = results[0].plot()
     
-#     return Image.fromarray(plot)
+# #     return Image.fromarray(plot)
 
-# def process_video(video_bytes):
-#     # Create a temporary file for the input video
-#     temp_input_file_path = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
-#     temp_input_file_path.write(video_bytes)
-#     temp_input_file_path.seek(0)
+# # def process_video(video_bytes):
+# #     # Create a temporary file for the input video
+# #     temp_input_file_path = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+# #     temp_input_file_path.write(video_bytes)
+# #     temp_input_file_path.seek(0)
     
-#     # Create a temporary file for the output video
-#     temp_output_file_path = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+# #     # Create a temporary file for the output video
+# #     temp_output_file_path = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
     
-#     try:
-#         # Initialize video capture and writer
-#         cap = cv2.VideoCapture(temp_input_file_path.name)
-#         if not cap.isOpened():
-#             raise ValueError("Error opening video file for input")
+# #     try:
+# #         # Initialize video capture and writer
+# #         cap = cv2.VideoCapture(temp_input_file_path.name)
+# #         if not cap.isOpened():
+# #             raise ValueError("Error opening video file for input")
 
-#         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-#         fps = cap.get(cv2.CAP_PROP_FPS)
-#         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-#         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-#         out = cv2.VideoWriter(temp_output_file_path.name, fourcc, fps, (width, height))
+# #         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+# #         fps = cap.get(cv2.CAP_PROP_FPS)
+# #         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+# #         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+# #         out = cv2.VideoWriter(temp_output_file_path.name, fourcc, fps, (width, height))
         
-#         if not out.isOpened():
-#             raise ValueError("Error opening video file for output")
+# #         if not out.isOpened():
+# #             raise ValueError("Error opening video file for output")
         
-#         while True:
-#             ret, frame = cap.read()
-#             if not ret:
-#                 break
+# #         while True:
+# #             ret, frame = cap.read()
+# #             if not ret:
+# #                 break
             
-#             # Convert BGR to RGB
-#             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+# #             # Convert BGR to RGB
+# #             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             
-#             # Run pose estimation
-#             results = model(frame_rgb)
+# #             # Run pose estimation
+# #             results = model(frame_rgb)
             
-#             # Get the plot image with poses drawn on it
-#             plot = results[0].plot()
+# #             # Get the plot image with poses drawn on it
+# #             plot = results[0].plot()
             
-#             # Convert plot to BGR for saving
-#             plot_bgr = cv2.cvtColor(np.array(plot), cv2.COLOR_RGB2BGR)
+# #             # Convert plot to BGR for saving
+# #             plot_bgr = cv2.cvtColor(np.array(plot), cv2.COLOR_RGB2BGR)
             
-#             # Write the frame with pose detection to output video
-#             out.write(plot_bgr)
+# #             # Write the frame with pose detection to output video
+# #             out.write(plot_bgr)
         
-#         cap.release()
-#         out.release()
-#     except Exception as e:
-#         print(f"Error during video processing: {e}")
-#         return None
+# #         cap.release()
+# #         out.release()
+# #     except Exception as e:
+# #         print(f"Error during video processing: {e}")
+# #         return None
 
-#     # Return the output video file path
-#     return temp_output_file_path.name
+# #     # Return the output video file path
+# #     return temp_output_file_path.name
 
-# def main():
-#     st.title("Pose Detection App")
+# # def main():
+# #     st.title("Pose Detection App")
     
-#     # Initialize session state for video processing
-#     if 'output_video_path' not in st.session_state:
-#         st.session_state.output_video_path = None
+# #     # Initialize session state for video processing
+# #     if 'output_video_path' not in st.session_state:
+# #         st.session_state.output_video_path = None
     
-#     # Sidebar options
-#     option = st.sidebar.selectbox("Choose Input Source", ["Upload Image", "Upload Video", "Webcam"])
+# #     # Sidebar options
+# #     option = st.sidebar.selectbox("Choose Input Source", ["Upload Image", "Upload Video", "Webcam"])
     
-#     if option == "Upload Image":
-#         uploaded_file = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"])
-#         if uploaded_file is not None:
-#             image = Image.open(uploaded_file)
-#             st.image(image, caption="Uploaded Image", use_column_width=True)
-#             st.write("")
-#             st.write("Detecting pose...")
-#             result_image = detect_pose(image)
-#             st.image(result_image, caption="Pose Detection Result", use_column_width=True)
-#             # Provide download link for image
-#             buffered = io.BytesIO()
-#             result_image.save(buffered, format="PNG")
-#             st.download_button(label="Download Result Image", data=buffered.getvalue(), file_name="pose_detection_result.png")
+# #     if option == "Upload Image":
+# #         uploaded_file = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"])
+# #         if uploaded_file is not None:
+# #             image = Image.open(uploaded_file)
+# #             st.image(image, caption="Uploaded Image", use_column_width=True)
+# #             st.write("")
+# #             st.write("Detecting pose...")
+# #             result_image = detect_pose(image)
+# #             st.image(result_image, caption="Pose Detection Result", use_column_width=True)
+# #             # Provide download link for image
+# #             buffered = io.BytesIO()
+# #             result_image.save(buffered, format="PNG")
+# #             st.download_button(label="Download Result Image", data=buffered.getvalue(), file_name="pose_detection_result.png")
     
-#     elif option == "Upload Video":
-#         uploaded_video = st.file_uploader("Choose a video file", type=["mp4"])
-#         if uploaded_video is not None:
-#             if st.session_state.output_video_path is None:
-#                 st.write("Processing video...")
-#                 st.session_state.output_video_path = process_video(uploaded_video.getvalue())
+# #     elif option == "Upload Video":
+# #         uploaded_video = st.file_uploader("Choose a video file", type=["mp4"])
+# #         if uploaded_video is not None:
+# #             if st.session_state.output_video_path is None:
+# #                 st.write("Processing video...")
+# #                 st.session_state.output_video_path = process_video(uploaded_video.getvalue())
                 
-#             if st.session_state.output_video_path and os.path.exists(st.session_state.output_video_path):
-#                 st.write("Video processing complete.")
+# #             if st.session_state.output_video_path and os.path.exists(st.session_state.output_video_path):
+# #                 st.write("Video processing complete.")
                 
-#                 # Read the video file as bytes
-#                 with open(st.session_state.output_video_path, "rb") as video_file:
-#                     video_bytes = video_file.read()
+# #                 # Read the video file as bytes
+# #                 with open(st.session_state.output_video_path, "rb") as video_file:
+# #                     video_bytes = video_file.read()
                 
-#                 # Display the processed video
-#                 st.Video(video_bytes, format="video/mp4")
+# #                 # Display the processed video
+# #                 st.Video(video_bytes, format="video/mp4")
                 
-#                 # Provide download link for video
-#                 st.download_button(label="Download Processed Video", data=video_bytes, file_name="pose_detection_result.mp4")
+# #                 # Provide download link for video
+# #                 st.download_button(label="Download Processed Video", data=video_bytes, file_name="pose_detection_result.mp4")
                 
-#                 # Clean up temporary files when the app is restarted
-#                 if os.path.exists(st.session_state.output_video_path):
-#                     os.remove(st.session_state.output_video_path)
+# #                 # Clean up temporary files when the app is restarted
+# #                 if os.path.exists(st.session_state.output_video_path):
+# #                     os.remove(st.session_state.output_video_path)
 
     
-#     elif option == "Webcam":
-#         st.write("Opening webcam...")
-#         stframe = st.empty()
+# #     elif option == "Webcam":
+# #         st.write("Opening webcam...")
+# #         stframe = st.empty()
         
-#         stop_button = st.button('Stop Webcam', key='stop_webcam')
+# #         stop_button = st.button('Stop Webcam', key='stop_webcam')
         
-#         cap = cv2.VideoCapture(0)
-#         while True:
-#             ret, frame = cap.read()
-#             if not ret:
-#                 st.write("Failed to grab frame")
-#                 break
+# #         cap = cv2.VideoCapture(0)
+# #         while True:
+# #             ret, frame = cap.read()
+# #             if not ret:
+# #                 st.write("Failed to grab frame")
+# #                 break
             
-#             # Convert BGR to RGB
-#             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+# #             # Convert BGR to RGB
+# #             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             
-#             # Run pose estimation
-#             results = model(frame_rgb)
+# #             # Run pose estimation
+# #             results = model(frame_rgb)
             
-#             # Get the plot image with poses drawn on it
-#             plot = results[0].plot()
+# #             # Get the plot image with poses drawn on it
+# #             plot = results[0].plot()
             
-#             # Display the resulting frame
-#             stframe.image(plot, channels="RGB")
+# #             # Display the resulting frame
+# #             stframe.image(plot, channels="RGB")
             
-#             if stop_button:
-#                 break
+# #             if stop_button:
+# #                 break
         
-#         cap.release()
+# #         cap.release()
 
-# if __name__ == "__main__":
-#     main()
+# # if __name__ == "__main__":
+# #     main()
 
 
 
@@ -167,6 +167,8 @@ from PIL import Image
 import tempfile
 import os
 import io
+import streamlit.components.v1 as components
+from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
 
 # Load YOLO models for different tasks
 pose_model = YOLO("yolov8n-pose.pt")
@@ -238,6 +240,27 @@ def process_video(video_bytes, task):
 
     return temp_output_file_path.name
 
+class VideoTransformer(VideoTransformerBase):
+    def __init__(self, task):
+        self.task = task
+
+    def transform(self, frame):
+        img = frame.to_ndarray(format="bgr24")
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        
+        if self.task == "Pose Estimation":
+            results = pose_model(img_rgb)
+        elif self.task == "Object Detection":
+            results = det_model(img_rgb)
+        elif self.task == "Segmentation":
+            results = seg_model(img_rgb)
+        
+        # Convert plot to BGR before returning
+        plot = results[0].plot()
+        plot_bgr = cv2.cvtColor(np.array(plot), cv2.COLOR_RGB2BGR)
+        
+        return plot_bgr
+
 def main():
     st.title("Detection and Segmentation App")
     
@@ -291,34 +314,46 @@ def main():
                 if os.path.exists(st.session_state.output_video_path):
                     os.remove(st.session_state.output_video_path)
 
+
+    # normal opencv
+    # elif option == "Webcam":
+    #     st.write("Opening webcam...")
+    #     stframe = st.empty()
+    #     stop_button = st.button('Stop Webcam', key='stop_webcam')
+        
+    #     cap = cv2.VideoCapture(0)
+    #     while True:
+    #         ret, frame = cap.read()
+    #         if not ret:
+    #             st.write("Failed to grab frame")
+    #             break
+            
+    #         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            
+    #         if task == "Pose Estimation":
+    #             results = pose_model(frame_rgb)
+    #         elif task == "Object Detection":
+    #             results = det_model(frame_rgb)
+    #         elif task == "Segmentation":
+    #             results = seg_model(frame_rgb)
+            
+    #         plot = results[0].plot()
+    #         stframe.image(plot, channels="RGB")
+            
+    #         if stop_button:
+    #             break
+        
+    #     cap.release()
+
+    # webrtc
     elif option == "Webcam":
         st.write("Opening webcam...")
-        stframe = st.empty()
-        stop_button = st.button('Stop Webcam', key='stop_webcam')
-        
-        cap = cv2.VideoCapture(0)
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                st.write("Failed to grab frame")
-                break
-            
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            
-            if task == "Pose Estimation":
-                results = pose_model(frame_rgb)
-            elif task == "Object Detection":
-                results = det_model(frame_rgb)
-            elif task == "Segmentation":
-                results = seg_model(frame_rgb)
-            
-            plot = results[0].plot()
-            stframe.image(plot, channels="RGB")
-            
-            if stop_button:
-                break
-        
-        cap.release()
+        webrtc_streamer(key="example", video_transformer_factory=lambda: VideoTransformer(task))
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
